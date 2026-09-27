@@ -1,19 +1,27 @@
 import { clsx } from 'clsx';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { ArrowButton } from 'src/ui/arrow-button';
 import { Button } from 'src/ui/button';
+import { useOutsideClickClose } from 'src/ui/select/hooks/useOutsideClickClose';
 
 import styles from './ArticleParamsForm.module.scss';
 
 export const ArticleParamsForm = (): React.JSX.Element => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  useOutsideClickClose({
+    isOpen: isMenuOpen,
+    rootRef,
+    onChange: setIsMenuOpen,
+  });
 
   const toggleMenu = (): void => {
     setIsMenuOpen((isOpen) => !isOpen);
   };
 
   return (
-    <>
+    <div ref={rootRef}>
       <ArrowButton isOpen={isMenuOpen} onClick={toggleMenu} />
       <aside className={clsx(styles.container, { [styles.container_open]: isMenuOpen })}>
         <form className={styles.form}>
@@ -23,6 +31,6 @@ export const ArticleParamsForm = (): React.JSX.Element => {
           </div>
         </form>
       </aside>
-    </>
+    </div>
   );
 };
