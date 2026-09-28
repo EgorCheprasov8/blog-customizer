@@ -3,7 +3,6 @@ import { useRef, useState } from 'react';
 import {
   backgroundColors,
   contentWidthArr,
-  defaultArticleState,
   fontColors,
   fontFamilyOptions,
   fontSizeOptions,
@@ -16,13 +15,22 @@ import { useOutsideClickClose } from 'src/ui/select/hooks/useOutsideClickClose';
 import { Separator } from 'src/ui/separator';
 import { Text } from 'src/ui/text';
 
+import type { FormEvent } from 'react';
 import type { ArticleStateType, OptionType } from 'src/constants/articleProps';
 
 import styles from './ArticleParamsForm.module.scss';
 
-export const ArticleParamsForm = (): React.JSX.Element => {
+type ArticleParamsFormProps = {
+  articleState: ArticleStateType;
+  onApply: (state: ArticleStateType) => void;
+};
+
+export const ArticleParamsForm = ({
+  articleState,
+  onApply,
+}: ArticleParamsFormProps): React.JSX.Element => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-  const [formState, setFormState] = useState<ArticleStateType>(defaultArticleState);
+  const [formState, setFormState] = useState<ArticleStateType>(articleState);
   const rootRef = useRef<HTMLDivElement>(null);
 
   useOutsideClickClose({
@@ -41,11 +49,16 @@ export const ArticleParamsForm = (): React.JSX.Element => {
       setFormState((state) => ({ ...state, [field]: option }));
     };
 
+  const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
+    event.preventDefault();
+    onApply(formState);
+  };
+
   return (
     <div ref={rootRef}>
       <ArrowButton isOpen={isMenuOpen} onClick={toggleMenu} />
       <aside className={clsx(styles.container, { [styles.container_open]: isMenuOpen })}>
-        <form className={styles.form}>
+        <form className={styles.form} onSubmit={handleSubmit}>
           <Text as="h2" size={31} weight={800} uppercase>
             Задайте параметры
           </Text>
