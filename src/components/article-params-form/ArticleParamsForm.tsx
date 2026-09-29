@@ -3,6 +3,7 @@ import { useRef, useState } from 'react';
 import {
   backgroundColors,
   contentWidthArr,
+  defaultArticleState,
   fontColors,
   fontFamilyOptions,
   fontSizeOptions,
@@ -54,11 +55,17 @@ export const ArticleParamsForm = ({
     onApply(formState);
   };
 
+  const handleReset = (event: FormEvent<HTMLFormElement>): void => {
+    event.preventDefault();
+    setFormState(defaultArticleState);
+    onApply(defaultArticleState);
+  };
+
   return (
     <div ref={rootRef}>
       <ArrowButton isOpen={isMenuOpen} onClick={toggleMenu} />
       <aside className={clsx(styles.container, { [styles.container_open]: isMenuOpen })}>
-        <form className={styles.form} onSubmit={handleSubmit}>
+        <form className={styles.form} onSubmit={handleSubmit} onReset={handleReset}>
           <Text as="h2" size={31} weight={800} uppercase>
             Задайте параметры
           </Text>
